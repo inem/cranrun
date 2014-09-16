@@ -1,5 +1,7 @@
 source "http://rubygems.org"
 
 gem "sinatra"
-gem "nokogiri"
+gem "pry"
 gem "virtus"
+gem "nokogiri"
+gem "rspec"
