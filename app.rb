@@ -13,9 +13,11 @@ class DescExtractor
   def self.run(package)
     Dir.mktmpdir do |dir|
       Dir.chdir dir
-      `wget –quiet –output-document output_filename#{package.url}`
+      `wget --quiet  #{package.url}`
       `tar xzf --extract --file=./#{package.filename} #{package.name}/DESCRIPTION`
-      a = open("#{package.name}/DESCRIPTION")
+      text = open("#{package.name}/DESCRIPTION").read
+
+      Dcf.parse(text)
     end
   end
 end
@@ -31,12 +33,44 @@ class App
     DirParser.run(contents) do |filename, name, version|
       package = Package.new(filename: filename, name: name, version: version)
       @packages << package
-      puts package.url
     end
-
   end
 end
 
-App.new("fixtures/contrib.html")
+def extract_people(string)
+  people = []
+  string.split(/>,?/).each do |part|
+    if part.include?("<")
+      splitted = part.split("<")
+
+      person = Person.new(name: splitted.first.strip, email: splitted.last.strip)
+      puts person.inspect
+      people << person
+    end
+
+  end
+  people
+end
+
+def extract_date(string)
+  DateTime.strptime(string, '%Y-%m-%d %H:%M:%S')
+end
+
+
+app = App.new("fixtures/contrib.html")
+
+package = app.packages.last
+data = DescExtractor.run(package).first
+
+package.attributes = {
+        publication_date: extract_date(data["Date/Publication"]),
+        title: data["Title"],
+        description: data["Description"],
+        authors: extract_people(data["Author"]),
+        maintainers: extract_people(data["Maintainer"])
+      }
+
+puts package.inspect
+
 
 
