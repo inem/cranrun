@@ -45,16 +45,18 @@ class PackageRepository
   private
 
   def get_package(package_data)
-    data = OpenStruct.new(package_data)
-    Entities::Package.new({
-      name: data.name,
-      versions: data.versions,
-      publication_date: data.publication_date,
-      title: data.title,
-      description: data.description,
-      authors: get_people(data.authors),
-      maintainers: get_people(data.maintainers)
-    })
+    if package_data
+      data = OpenStruct.new(package_data)
+      Entities::Package.new({
+        name: data.name,
+        versions: data.versions,
+        publication_date: data.publication_date,
+        title: data.title,
+        description: data.description,
+        authors: get_people(data.authors),
+        maintainers: get_people(data.maintainers)
+      })
+    end
   end
 
 

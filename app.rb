@@ -18,7 +18,7 @@ class App
   URL  = "http://cran.at.r-project.org/src/contrib/"
   attr_accessor :packages
 
-  def initialize(source)
+  def first_run(source)
     contents = open(source).read
 
     @packages = []
@@ -26,13 +26,29 @@ class App
       package = Entities::Package.new(filename: filename, name: name, version: version)
       @packages << package
       DescParser.new(package).update_package!
-      # puts package.name, package.authors.inspect, package.maintainers.inspect, ""
 
       repo = PackageRepository.new
       repo.store_new(package)
     end
   end
+
+  def update(source)
+    contents = open(source).read
+    repo = PackageRepository.new
+
+    @packages = []
+    DirParser.run(contents) do |filename, name, version|
+      package = repo.find_by_name(name)
+      if package
+        unless package.versions.include?(version)
+          puts "new version!! #{name} #{version}"
+          repo.add_version(package, version)
+        end
+      else
+        puts "new package!!: #{name}"
+        package = Entities::Package.new(filename: filename, name: name, version: version)
+        repo.store_new(package)
+      end
+    end
+  end
 end
-
-
-
