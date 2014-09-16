@@ -3,42 +3,40 @@ require 'pry'
 require 'nokogiri'
 require 'open-uri'
 require 'rspec'
+require 'dcf'
+require 'tmpdir'
 
-class Package
- include Virtus.model
+require_relative 'lib/models.rb'
+require_relative 'lib/parsers.rb'
 
-  attribute :name, String
-  attribute :version, String
-
-end
-
-class DirParser
-  def self.run(contents)
-    doc = Nokogiri::HTML(contents)
-
-    doc.css('td a[href]').each do |line|
-      regexp = /([^"]*)_(\S*).tar.gz/
-      match = regexp.match(line.content).to_a
-      unless match.empty?
-        yield(match[1], match[2])
-      end
+class DescExtractor
+  def self.run(package)
+    Dir.mktmpdir do |dir|
+      Dir.chdir dir
+      `wget –quiet –output-document output_filename#{package.url}`
+      `tar xzf --extract --file=./#{package.filename} #{package.name}/DESCRIPTION`
+      a = open("#{package.name}/DESCRIPTION")
     end
   end
 end
-
 
 class App
-  def self.run
-    url = "http://cran.at.r-project.org/src/contrib/"
-    contents = open("./contrib.html").read
+  URL  = "http://cran.at.r-project.org/src/contrib/"
+  attr_accessor :packages
 
-    packages = []
-    DirParser.run(contents) do |name, version|
-      package = Package.new(name: name, version: version)
-      packages << package
+  def initialize(source)
+    contents = open(source).read
+
+    @packages = []
+    DirParser.run(contents) do |filename, name, version|
+      package = Package.new(filename: filename, name: name, version: version)
+      @packages << package
+      puts package.url
     end
 
   end
 end
 
-App.run
+App.new("fixtures/contrib.html")
+
+
