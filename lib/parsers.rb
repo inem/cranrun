@@ -48,8 +48,8 @@ class DescParser
       if part.include?("<")
         splitted = part.split("<")
 
-        person = Person.new(name: splitted.first.strip, email: splitted.last.strip)
-        puts person.inspect
+        person = Entities::Person.new(name: splitted.first.strip, email: splitted.last.strip)
+        # puts person.inspect
         people << person
       end
 

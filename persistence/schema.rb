@@ -1,9 +1,9 @@
 require "rubygems"
 require "sequel"
 
-DB = Sequel.sqlite("packages.db")
+DB = Sequel.sqlite("data.db")
 
-DB.create_table :items do
+DB.create_table :packages do
   primary_key :id
   String :name
   String :version

@@ -1,6 +1,7 @@
 require "rubygems"
 require 'virtus'
 require 'pry'
+require 'sqlite3'
 require 'nokogiri'
 require 'open-uri'
 require 'rspec'
@@ -8,8 +9,10 @@ require 'dcf'
 require 'tmpdir'
 
 require_relative 'persistence/models.rb'
+require_relative 'persistence/package_repository.rb'
 require_relative 'lib/entities.rb'
 require_relative 'lib/parsers.rb'
+
 
 class App
   URL  = "http://cran.at.r-project.org/src/contrib/"
@@ -20,20 +23,16 @@ class App
 
     @packages = []
     DirParser.run(contents) do |filename, name, version|
-      package = Package.new(filename: filename, name: name, version: version)
+      package = Entities::Package.new(filename: filename, name: name, version: version)
       @packages << package
+      DescParser.new(package).update_package!
+      # puts package.name, package.authors.inspect, package.maintainers.inspect, ""
+
+      repo = PackageRepository.new
+      repo.store(package)
     end
   end
 end
 
 
 app = App.new("fixtures/contrib.html")
-
-
-app.packages.each do |package|
-  desc_parser = DescParser.new(package)
-  desc_parser.update_package!
-  puts package.name, package.authors.inspect, package.maintainers.inspect, ""
-
-end
-
