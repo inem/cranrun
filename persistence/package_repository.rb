@@ -1,27 +1,42 @@
 require_relative 'models.rb'
 require_relative '../lib/entities.rb'
 
+require 'mongo'
+include Mongo
+
 class PackageRepository
+  def initialize
+    mongo = MongoClient.new
+    db = mongo["packages_db"]
+    @collection = db["packages"]
+    # @people_collection = db["people"]
+  end
+
   def store(package)
-    puts Package.inspect
-    record = Package.create!({
+    @collection.insert({
       name: package.name,
       version: package.version,
-      publication_date: package.publication_date,
+      publication_date: to_time(package.publication_date),
       title: package.title,
-      description: package.description
+      description: package.description,
+      authors: people(package.authors),
+      maintainers: people(package.maintainers)
     })
+  end
 
-    package.authors.each do |author|
-      db_person = Person.find_by_email(author.email)
-      record.authors << db_person
+  def get_by_name(name)
+    @collection.find(name: name)
+  end
+
+  private
+
+  def people(ppl)
+    ppl.map do |p|
+      {email: p.email, name: p.name}
     end
+  end
 
-    package.maintainers.each do |author|
-      db_person = Person.find_by_email(author.email)
-      record.maintainers << db_person
-    end
-
-    record.save!
+  def to_time(date)
+    date.to_time.utc if date
   end
 end
