@@ -16,16 +16,13 @@ class DirParser
   def self.run(contents)
     doc = Nokogiri::HTML(contents)
 
-    res = []
     doc.css('td a[href]').each do |line|
-      puts line.content
-
       regexp = /([^"]*)_(\S*).tar.gz/
       match = regexp.match(line.content).to_a
-      res << [match[1], match[2]]
-
+      unless match.empty?
+        yield(match[1], match[2])
+      end
     end
-    res
   end
 end
 
@@ -33,9 +30,14 @@ end
 class App
   def self.run
     url = "http://cran.at.r-project.org/src/contrib/"
-    contents = open(url).read
+    contents = open("./contrib.html").read
 
-    DirParser.run(contents)
+    packages = []
+    DirParser.run(contents) do |name, version|
+      package = Package.new(name: name, version: version)
+      packages << package
+    end
+
   end
 end
 

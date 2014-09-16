@@ -6,3 +6,8 @@
 - parse PACKAGE
 - fill more info into objects
 - persist
+
+
+===
+
+to_enum
