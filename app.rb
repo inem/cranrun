@@ -1,7 +1,6 @@
 require "rubygems"
 require 'virtus'
 require 'pry'
-require 'sqlite3'
 require 'nokogiri'
 require 'open-uri'
 require 'rspec'
@@ -17,6 +16,10 @@ class App
   URL  = "http://cran.at.r-project.org/src/contrib/"
   attr_accessor :packages
 
+  def repo
+    PackageRepository.new("packages")
+  end
+
   def first_run(source)
     contents = open(source).read
 
@@ -26,14 +29,12 @@ class App
       @packages << package
       DescParser.new(package).update_package!
 
-      repo = PackageRepository.new
       repo.store_new(package)
     end
   end
 
   def update(source)
     contents = open(source).read
-    repo = PackageRepository.new
 
     @packages = []
     DirParser.run(contents) do |filename, name, version|

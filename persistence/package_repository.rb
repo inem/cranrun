@@ -5,10 +5,12 @@ require 'mongo'
 include Mongo
 
 class PackageRepository
-  def initialize
+  attr_accessor :collection
+
+  def initialize(collection)
     mongo = MongoClient.new
     db = mongo["packages_db"]
-    @collection = db["packages"]
+    @collection = db[collection]
   end
 
   def store_new(package)
