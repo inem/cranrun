@@ -1,5 +1,6 @@
 require_relative 'models.rb'
 require_relative '../lib/entities.rb'
+require 'ostruct'
 
 require 'mongo'
 include Mongo
@@ -12,10 +13,10 @@ class PackageRepository
     # @people_collection = db["people"]
   end
 
-  def store(package)
+  def store_new(package)
     @collection.insert({
       name: package.name,
-      version: package.version,
+      versions: [package.version],
       publication_date: to_time(package.publication_date),
       title: package.title,
       description: package.description,
@@ -24,11 +25,44 @@ class PackageRepository
     })
   end
 
-  def get_by_name(name)
-    @collection.find(name: name)
+  # TODO: untested
+  def add_version(package, version)
+    record = @collection.find(name: package.name)
+    versions = record.versions + Array(version)
+    @collection.find(name: package.name).update(versions)
+  end
+
+  def all
+    @collection.find.map do |data|
+      get_package(data)
+    end
+  end
+
+  def find_by_name(name)
+    get_package(@collection.find(name: name).first)
   end
 
   private
+
+  def get_package(package_data)
+    data = OpenStruct.new(package_data)
+    Entities::Package.new({
+      name: data.name,
+      versions: data.versions,
+      publication_date: data.publication_date,
+      title: data.title,
+      description: data.description,
+      authors: get_people(data.authors),
+      maintainers: get_people(data.maintainers)
+    })
+  end
+
+
+  def get_people(people_data)
+    people_data.map do |p|
+      Entities::Person.new(name: p["name"], email: p["email"])
+    end
+  end
 
   def people(ppl)
     ppl.map do |p|

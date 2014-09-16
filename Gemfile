@@ -6,7 +6,5 @@ gem "virtus"
 gem "nokogiri"
 gem "rspec"
 gem "treetop-dcf"
-gem "sequel"
-# gem "activerecord"
-# gem "sqlite3"
 gem "mongo"
+gem 'haml'

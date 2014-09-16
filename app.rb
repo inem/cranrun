@@ -29,10 +29,10 @@ class App
       # puts package.name, package.authors.inspect, package.maintainers.inspect, ""
 
       repo = PackageRepository.new
-      repo.store(package)
+      repo.store_new(package)
     end
   end
 end
 
 
-app = App.new("fixtures/contrib.html")
+

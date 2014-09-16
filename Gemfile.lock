@@ -13,6 +13,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     equalizer (0.0.9)
+    haml (4.0.5)
+      tilt
     ice_nine (0.11.0)
     method_source (0.8.2)
     mini_portile (0.6.0)
@@ -40,7 +42,6 @@ GEM
     rspec-mocks (3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.0)
-    sequel (4.14.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -62,11 +63,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  haml
   mongo
   nokogiri
   pry
   rspec
-  sequel
   sinatra
   treetop-dcf
   virtus

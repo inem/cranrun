@@ -1,0 +1,34 @@
+Name:
+=@package.name
+%br
+
+Versions:
+%ul
+  -@package.versions.each do |p|
+    %li= p
+%br
+
+Date:
+=@package.publication_date
+%br
+
+Title:
+=@package.title
+%br
+
+
+Description:
+=@package.description
+%br
+
+Authors:
+%ul
+  -@package.authors.each do |p|
+    %li= p.name
+%br
+
+Maintainers:
+%ul
+  -@package.maintainers.each do |p|
+    %li= p.name
+%br

@@ -5,16 +5,16 @@ module Entities
 
     attribute :name, String
     attribute :email, String
-
   end
 
   class Package
     include Virtus.model
 
+    attribute :version, String
     attribute :filename, String
 
     attribute :name, String
-    attribute :version, String
+    attribute :versions, [String]
     attribute :publication_date, Date
     attribute :title, String
     attribute :description, String
