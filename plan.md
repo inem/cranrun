@@ -9,13 +9,14 @@
     + unarchive tar.gz
   
 
-- fill more info into objects
+★ fill more info into objects
 - persist data into db
 - update data
 - update task
     - handle versions
 - tests
 - sinatra app
+- improve extract_people method
 
 
 ===
