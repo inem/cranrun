@@ -1,4 +1,3 @@
-require_relative 'models.rb'
 require_relative '../lib/entities.rb'
 require 'ostruct'
 
@@ -10,7 +9,6 @@ class PackageRepository
     mongo = MongoClient.new
     db = mongo["packages_db"]
     @collection = db["packages"]
-    # @people_collection = db["people"]
   end
 
   def store_new(package)
@@ -25,10 +23,10 @@ class PackageRepository
     })
   end
 
-  # TODO: untested
+  #doesnt work
   def add_version(package, version)
-    record = @collection.find(name: package.name)
-    versions = record.versions + Array(version)
+    stored_package = get_package(@collection.find(name: package.name).first)
+    versions = stored_package.versions + Array(version)
     @collection.find(name: package.name).update(versions)
   end
 

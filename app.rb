@@ -8,7 +8,6 @@ require 'rspec'
 require 'dcf'
 require 'tmpdir'
 
-require_relative 'persistence/models.rb'
 require_relative 'persistence/package_repository.rb'
 require_relative 'lib/entities.rb'
 require_relative 'lib/parsers.rb'
@@ -42,7 +41,8 @@ class App
       if package
         unless package.versions.include?(version)
           puts "new version!! #{name} #{version}"
-          repo.add_version(package, version)
+          # TODO:
+          # repo.add_version(package, version)
         end
       else
         puts "new package!!: #{name}"

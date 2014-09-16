@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'haml'
-require_relative 'persistence/models.rb'
 require_relative 'persistence/package_repository.rb'
 
 get '/index' do
