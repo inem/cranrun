@@ -5,6 +5,8 @@ describe PackageRepository do
   let (:repo) { PackageRepository.new("packages_test") }
   let (:name) { "aaa" }
   let (:pkg) { Entities::Package.new(name: name, version: "1.0", authors:[], maintainers: []) }
+  let (:pkg1) { Entities::Package.new(name: "bbb", version: "1.0", authors:[], maintainers: []) }
+  let (:pkg2) { Entities::Package.new(name: "ccc", version: "1.0", authors:[], maintainers: []) }
 
   before do
     repo.collection.remove
@@ -26,5 +28,13 @@ describe PackageRepository do
     repo.store_new(pkg)
     stored_pkg = repo.find_by_name(name)
     expect(stored_pkg.name).to eql(name)
+  end
+
+  it "provides interface to get all packages" do
+    repo.store_new(pkg1)
+    repo.store_new(pkg2)
+    expect(repo.all.map(&:name)).to include(pkg1.name)
+    expect(repo.all.map(&:name)).to include(pkg2.name)
+    expect(repo.all.map(&:name)).not_to include(pkg.name)
   end
 end
